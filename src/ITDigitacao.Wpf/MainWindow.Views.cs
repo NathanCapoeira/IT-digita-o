@@ -759,7 +759,7 @@ namespace ITDigitacao.Wpf
         }
     }
 
-    internal sealed class AppPreferences
+    public sealed class AppPreferences
     {
         public int FontSize { get; set; } = 18;
         public bool Sounds { get; set; }
