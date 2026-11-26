@@ -1,36 +1,42 @@
-# IT Digitação
+# IT Digitação 3.0 — reconstrução WPF
 
-Aplicativo educacional de treino de digitação para o Instituto de Transformação. A aplicação foi planejada para funcionar localmente, sem conta, telemetria, serviços externos ou conexão durante o uso.
+Aplicativo educacional de treino de digitação do Instituto de Transformação. A reconstrução em andamento usa WPF, conteúdo JSON e recursos gráficos locais, sem login, telemetria, publicidade ou conexão necessária durante o uso.
 
-## Estado atual
+## Estado da reconstrução
 
-Esta é uma fundação funcional em desenvolvimento, não uma versão 1.0 pronta para uso em sala. Inclui estrutura WinForms, biblioteca local com 30 atividades em dez categorias, filtros, editor de digitação, métricas básicas e cronômetro que começa no primeiro caractere. Ainda faltam validação robusta da biblioteca, persistência das preferências, bloqueio completo dos caminhos de colagem e testes automatizados abrangentes.
-
-## Reformulação visual 2.0
-
-As telas foram reconstruídas com controles WinForms reais, navegação lateral, mascote e ícones locais, cartões de categoria/atividade, editor dividido, guia ABNT2 e preferências locais. Consulte `docs/IT-Digitacao-2.0.md` para arquivos, validações e limitações. As novas telas ainda não foram compiladas nem comparadas visualmente em Windows neste ambiente.
+O trabalho da versão WPF está na branch `rebuild/it-digitacao`; a branch `main` continua preservando a versão anterior. Esta branch contém as telas e o fluxo de compilação WPF, mas a compilação Windows e a validação visual ainda precisam ser confirmadas antes de distribuir o aplicativo.
 
 ## Requisitos
 
-- Windows com .NET Framework 4.8 instalado. No Windows 7, é necessário Windows 7 SP1, suporte a SHA-2 e atualização de servicing stack, além das atualizações de plataforma exigidas pelo instalador do .NET Framework 4.8. Instale o runtime previamente usando os pacotes oficiais da Microsoft. A implantação x86 permite executar em Windows de 32 e 64 bits.
-- Para compilar: Visual Studio ou Build Tools com MSBuild e .NET Framework 4.8 targeting pack.
+- Windows e .NET Framework 4.8 para executar.
+- Visual Studio ou Build Tools com MSBuild e o targeting pack do .NET Framework 4.8 para compilar.
+- Para Windows 7 SP1, instale previamente todos os requisitos e atualizações exigidos pelo instalador do .NET Framework 4.8. A compatibilidade com Windows 7 ainda não foi testada nesta reconstrução.
 
-Windows 7 SP1 pode executar .NET Framework 4.8 após as atualizações e requisitos de sistema publicados pela Microsoft. Essa compatibilidade não foi testada nesta implementação. O projeto não instala pré-requisitos durante a execução.
+## Compilar no Windows
 
-## Compilar
+Na raiz do repositório, abra o Developer PowerShell do Visual Studio e execute:
 
-No Windows, execute `scripts\build-windows.cmd` ou abra `ITDigitacao.sln` no Visual Studio e compile a configuração Release. O fluxo GitHub Actions em `.github/workflows/build-windows.yml` realiza compilação em runner Windows. O executável, quando compilado, ficará em `src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe`. O script de compilação abre o aplicativo após gerar o executável.
+```powershell
+.\scripts\build-windows.cmd
+```
 
-Este ambiente de desenvolvimento não tem .NET SDK, MSBuild ou Mono, portanto nenhum executável foi produzido ou validado aqui. O workflow Windows ainda precisa rodar para confirmar a compilação.
+O script restaura e compila o projeto WPF em Release x86 e abre o executável gerado em:
 
-## Conteúdo
+```text
+src\ITDigitacao.Wpf\bin\x86\Release\net48\IT-Digitacao-3.0.exe
+```
 
-As atividades ficam em `content/activities.json`, em UTF-8. Cada item inclui identificador, título, categoria, dificuldade, descrição, texto, pergunta opcional, alternativas, índice da resposta correta e referências. Os textos atuais são autorais e não possuem fontes externas consultadas; revisão factual por educadores e conferência das informações são pendentes antes de uso institucional.
+O workflow `.github/workflows/build-windows.yml` compila o WPF, executa os testes do Core, verifica os recursos e prepara o pacote `IT-Digitacao-3.0-Rebuild-Release.zip`. Uma configuração de workflow não comprova que a execução terminou com sucesso; consulte a aba Actions para o resultado real.
 
-## Métricas
+## Conteúdo e funcionamento offline
 
-PPM usa caracteres corretos divididos por cinco e pelo tempo efetivo em minutos, com os primeiros cinco segundos ignorados. Precisão considera todas as tentativas de caracteres, inclusive erros que depois são apagados. O progresso usa caracteres líquidos atualmente corretos. As métricas são provisórias e ainda precisam de testes unitários e revisão do motor.
+As 30 atividades ficam em `content/activities.json`, em UTF-8, organizadas em dez categorias e três níveis. Imagens, ícones, logo e mascotes ficam em `src/ITDigitacao.Wpf/Assets` e são incorporados pelo projeto WPF.
 
-## Recursos gráficos
+## Limitações conhecidas
 
-`assets/logo-conceitual.png` é uma arte provisória gerada a partir da referência visual enviada. Não é o logotipo institucional original. Substitua pela arte oficial aprovada antes da distribuição. O ícone multi-resolução também está pendente.
+- Build Release WPF em Windows ainda pendente de confirmação.
+- Testes automatizados foram acrescentados, mas ainda precisam de execução confirmada.
+- Validação visual e funcional nas resoluções e níveis de DPI previstos ainda pendente.
+- Compatibilidade com Windows 7 ainda não comprovada em equipamento real.
+- Os textos são autorais e precisam de revisão factual/pedagógica antes do uso institucional.
+- Confirme a autorização de uso do logotipo oficial antes da distribuição.
