@@ -21,16 +21,16 @@ using ITDigitacao.Core.Typing;
 
 namespace ITDigitacao.Wpf
 {
-    public partial class MainWindow
+    internal static class JsonSerialization
     {
-        private static T JsonRead<T>(string json)
+        internal static T JsonRead<T>(string json)
         {
             var serializer = new DataContractJsonSerializer(typeof(T));
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
                 return (T)serializer.ReadObject(stream);
         }
 
-        private static string JsonWrite<T>(T value)
+        internal static string JsonWrite<T>(T value)
         {
             var serializer = new DataContractJsonSerializer(typeof(T));
             using (var stream = new MemoryStream())
@@ -39,7 +39,10 @@ namespace ITDigitacao.Wpf
                 return Encoding.UTF8.GetString(stream.ToArray());
             }
         }
+    }
 
+    public partial class MainWindow
+    {
         private readonly string[] categoryNames = {
             "Informática e tecnologia", "Ciências e curiosidades", "Meio ambiente", "Educação financeira",
             "Segurança digital", "Ética e cidadania", "Desenvolvimento pessoal", "Mundo profissional",
@@ -107,7 +110,7 @@ namespace ITDigitacao.Wpf
 
         private void LoadActivities()
         {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "activities.json");
+            string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "activities.json");
             if (!File.Exists(path)) throw new FileNotFoundException("A biblioteca educativa local não foi encontrada.", path);
             var loaded = JsonRead<List<Activity>>(File.ReadAllText(path));
             if (loaded == null || loaded.Count != 30 || loaded.Any(a => String.IsNullOrWhiteSpace(a.Id) || String.IsNullOrWhiteSpace(a.Content))
@@ -754,16 +757,16 @@ namespace ITDigitacao.Wpf
         public bool Sounds { get; set; }
         public bool ShowMetrics { get; set; } = true;
         public bool FocusMode { get; set; }
-        private static string FilePath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ITDigitacao", "settings.json"); } }
+        private static string FilePath { get { return System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ITDigitacao", "settings.json"); } }
         public static AppPreferences Load()
         {
-            try { if (File.Exists(FilePath)) return JsonRead<AppPreferences>(File.ReadAllText(FilePath)) ?? new AppPreferences(); } catch { }
+            try { if (File.Exists(FilePath)) return JsonSerialization.JsonRead<AppPreferences>(File.ReadAllText(FilePath)) ?? new AppPreferences(); } catch { }
             return new AppPreferences();
         }
         public void Save()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
-            File.WriteAllText(FilePath, JsonWrite(this));
+            File.WriteAllText(FilePath, JsonSerialization.JsonWrite(this));
         }
     }
 }
