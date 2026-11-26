@@ -15,7 +15,7 @@ Windows 7 SP1 pode executar .NET Framework 4.8 após as atualizações e requisi
 
 ## Compilar
 
-No Windows, execute `scripts\build-windows.cmd` ou abra `ITDigitacao.sln` no Visual Studio e compile a configuração Release. O fluxo GitHub Actions em `.github/workflows/build-windows.yml` realiza compilação em runner Windows. O executável, quando compilado, ficará em `src\ITDigitacao.App\bin\Release\IT-Digitacao.exe`.
+No Windows, execute `scripts\build-windows.cmd` ou abra `ITDigitacao.sln` no Visual Studio e compile a configuração Release. O fluxo GitHub Actions em `.github/workflows/build-windows.yml` realiza compilação em runner Windows. O executável, quando compilado, ficará em `src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe`. O script de compilação abre o aplicativo após gerar o executável.
 
 Este ambiente de desenvolvimento não tem .NET SDK, MSBuild ou Mono, portanto nenhum executável foi produzido ou validado aqui. O workflow Windows ainda precisa rodar para confirmar a compilação.
 

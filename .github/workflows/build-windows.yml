@@ -16,4 +16,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: IT-Digitacao-Release
-          path: src/ITDigitacao.App/bin/Release/
+          path: src/ITDigitacao.App/bin/x86/Release/net48/

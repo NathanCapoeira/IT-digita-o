@@ -16,7 +16,8 @@ if errorlevel 1 goto build_failed
 
 echo.
 echo Build completed. Output files are in:
-echo src\ITDigitacao.App\bin\Release\
+echo src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe
+if exist src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe start "" "src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe"
 echo.
 pause
 exit /b 0
