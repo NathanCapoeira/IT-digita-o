@@ -52,6 +52,15 @@ jobs:
         run: |
           $exe = 'src/ITDigitacao.Wpf/bin/x86/Release/net48/IT-Digitacao-3.0.exe'
           if (!(Test-Path $exe)) { throw "WPF executable not generated: $exe" }
+      - name: Smoke test WPF startup
+        shell: pwsh
+        run: |
+          $exe = (Resolve-Path 'src/ITDigitacao.Wpf/bin/x86/Release/net48/IT-Digitacao-3.0.exe').Path
+          $app = Start-Process -FilePath $exe -PassThru
+          Start-Sleep -Seconds 8
+          $app.Refresh()
+          if ($app.HasExited) { throw "WPF application exited during startup with code $($app.ExitCode)" }
+          Stop-Process -Id $app.Id -Force
       - name: Package WPF release
         shell: pwsh
         run: |
