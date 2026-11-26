@@ -444,6 +444,7 @@ namespace ITDigitacao.Wpf
             typingInput.Text = typingEngine.EnteredText;
             typingInput.TextChanged += TypingInput_TextChanged;
             typingInput.PreviewKeyDown += TypingInput_PreviewKeyDown;
+            typingInput.Loaded += delegate { typingInput.Focus(); Keyboard.Focus(typingInput); };
             DataObject.AddPastingHandler(typingInput, TypingInput_Pasting);
             inputStack.Children.Add(typingInput); inputCard.Child = inputStack; Grid.SetColumn(inputCard, 1); Grid.SetRow(inputCard, 0); panes.Children.Add(inputCard);
             panes.SizeChanged += delegate
