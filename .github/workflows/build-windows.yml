@@ -10,11 +10,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
-      - name: Verify WPF project and offline catalog
-        shell: pwsh
-        run: |
-          if (!(Test-Path 'src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj')) { throw 'WPF project missing' }
-          if (!(Test-Path 'content/activities.json')) { throw 'Offline activity catalog missing' }
       - name: Restore WPF
         run: msbuild src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
       - name: Verify WPF input files
@@ -37,7 +32,9 @@ jobs:
           $out = 'dist/IT-Digitacao-3.0-Rebuild-Release'
           New-Item -ItemType Directory -Force $out | Out-Null
           Copy-Item 'src/ITDigitacao.Wpf/bin/x86/Release/net48/*' $out -Recurse -Force
+          Copy-Item 'README.md' $out -Force
           "Commit: $env:GITHUB_SHA`nVersion: 3.0`nProject: WPF`nArchitecture: x86`nFramework: .NET Framework 4.8" | Set-Content "$out/BUILD-INFO.txt"
+          @("IT Digitação 3.0", "Extraia os arquivos e execute IT-Digitacao-3.0.exe.", "Requisito: .NET Framework 4.8.", "O aplicativo funciona offline.") | Set-Content "$out/LEIA-ME.txt"
           Compress-Archive -Path "$out/*" -DestinationPath 'dist/IT-Digitacao-3.0-Rebuild-Release.zip' -Force
       - name: Upload WPF release artifact
         uses: actions/upload-artifact@v4

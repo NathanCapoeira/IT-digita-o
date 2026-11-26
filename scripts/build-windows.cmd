@@ -7,8 +7,6 @@ where msbuild >nul 2>nul
 if errorlevel 1 goto no_msbuild
 
 echo Restoring project assets...
-msbuild src\ITDigitacao.App\ITDigitacao.App.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
-if errorlevel 1 goto restore_failed
 msbuild src\ITDigitacao.Wpf\ITDigitacao.Wpf.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
 if errorlevel 1 goto restore_failed
 echo Building WPF application...
