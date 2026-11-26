@@ -77,10 +77,35 @@ namespace ITDigitacao.App.Forms
             var filters = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true };
             var category = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 230 }; category.Items.Add("Todas as categorias"); category.Items.AddRange(activities.Select(a => a.Category).Distinct().ToArray()); category.SelectedIndex = 0;
             var difficulty = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 150 }; difficulty.Items.AddRange(new object[] { "Todas", "Iniciante", "Intermediário", "Avançado" }); difficulty.SelectedIndex = 0;
-            var search = new TextBox { Width = 220, PlaceholderText = "Pesquisar título" };
-            Action filter = delegate { foreach (ListViewItem row in list.Items) row.Visible = (category.SelectedIndex == 0 || row.SubItems[1].Text == category.Text) && (difficulty.SelectedIndex == 0 || row.SubItems[2].Text == difficulty.Text) && row.Text.IndexOf(search.Text, StringComparison.CurrentCultureIgnoreCase) >= 0; };
+            var search = new TextBox { Width = 220 };
+            search.AccessibleName = "Pesquisar título";
+            search.Text = "Pesquisar título";
+            search.ForeColor = Color.Gray;
+            search.GotFocus += delegate { if (search.Text == "Pesquisar título") { search.Text = ""; search.ForeColor = Color.Black; } };
+            search.LostFocus += delegate { if (String.IsNullOrWhiteSpace(search.Text)) { search.Text = "Pesquisar título"; search.ForeColor = Color.Gray; } };
+            Func<bool> canSearch = delegate { return search.Text != "Pesquisar título"; };
+            Action filter = delegate
+            {
+                list.BeginUpdate();
+                list.Items.Clear();
+                foreach (var activity in activities)
+                {
+                    bool matches = (category.SelectedIndex == 0 || activity.Category == category.Text)
+                        && (difficulty.SelectedIndex == 0 || activity.Difficulty == difficulty.Text)
+                        && (!canSearch() || activity.Title.IndexOf(search.Text, StringComparison.CurrentCultureIgnoreCase) >= 0);
+                    if (!matches) continue;
+                    var item = new ListViewItem(activity.Title);
+                    item.SubItems.Add(activity.Category);
+                    item.SubItems.Add(activity.Difficulty);
+                    item.SubItems.Add(activity.Content.Split((char[])null, StringSplitOptions.RemoveEmptyEntries).Length.ToString());
+                    item.SubItems.Add("varia por aluno");
+                    item.Tag = activity;
+                    list.Items.Add(item);
+                }
+                list.EndUpdate();
+            };
             category.SelectedIndexChanged += delegate { filter(); }; difficulty.SelectedIndexChanged += delegate { filter(); }; search.TextChanged += delegate { filter(); };
-            filters.Controls.Add(category); filters.Controls.Add(difficulty); filters.Controls.Add(search); layout.Controls.Add(filters, 0, 0); layout.SetRowSpan(list, 1); layout.Controls.Add(list, 0, 1);
+            filters.Controls.Add(category); filters.Controls.Add(difficulty); filters.Controls.Add(search); layout.Controls.Add(filters, 0, 0); layout.Controls.Add(list, 0, 1);
             var buttons = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill }; buttons.Controls.Add(Action("Voltar", ShowHome, false)); buttons.Controls.Add(Action("Aleatória", delegate { var candidates = activities.ToList(); if (candidates.Count > 0) OpenActivity(candidates[new Random().Next(candidates.Count)]); }, false)); buttons.Controls.Add(Action("Começar", delegate { if (list.SelectedItems.Count > 0) OpenActivity((Activity)list.SelectedItems[0].Tag); }, true)); layout.Controls.Add(buttons, 0, 2);
             pages.Controls.Add(layout);
         }
