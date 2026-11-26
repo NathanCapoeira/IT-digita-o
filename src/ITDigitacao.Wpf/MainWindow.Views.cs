@@ -662,7 +662,7 @@ namespace ITDigitacao.Wpf
         private UIElement CreateKeyboard()
         {
             var stack = new StackPanel(); stack.Children.Add(Text("Teclado ABNT2 — posição dos dedos", 20, true, (Brush)FindResource("BrandInk"), TextWrapping.Wrap));
-            string[] rows = { "º 1 2 3 4 5 6 7 8 9 0 - = BACKSPACE", "TAB Q W E R T Y U I O P ´ [ ] \\", "CAPS A S D F G H J K L Ç ~ ENTER", "SHIFT < > Z X C V B N M , . ; / SHIFT", "CTRL WIN ALT ESPAÇO ALTGR MENU CTRL" };
+            string[] rows = { "º 1 2 3 4 5 6 7 8 9 0 - = BACKSPACE", "TAB Q W E R T Y U I O P ´ [ ] \\", "CAPS A S D F G H J K L Ç ~ ENTER", "SHIFT <> Z X C V B N M , . ; / SHIFT", "CTRL WIN ALT ESPAÇO ALTGR MENU CTRL" };
             for (int rowIndex = 0; rowIndex < rows.Length; rowIndex++)
             {
                 string row = rows[rowIndex];
@@ -725,7 +725,7 @@ namespace ITDigitacao.Wpf
             if ("FGR TVB HJYUNM".Replace(" ", String.Empty).Contains(key)) return "#FFFFCFD4";
             if ("EDC IK,".Replace(" ", String.Empty).Contains(key)) return "#FFFFE2C6";
             if ("WSX OL.".Replace(" ", String.Empty).Contains(key)) return "#FFFFEBAE";
-            if ("QAZPÇ;'/[]´~=-º".Contains(key)) return "#FFDDEBFF";
+            if ("QAZPÇ;'/[]´~=-º<>".Contains(key)) return "#FFDDEBFF";
             return "#FFFFFFFF";
         }
 
