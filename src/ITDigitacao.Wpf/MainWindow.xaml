@@ -111,7 +111,7 @@
                     <Button Tag="30" Style="{StaticResource DurationButton}" Click="Duration_Click" local:DurationChoice.IsSelected="False" AutomationProperties.Name="30 minutos" />
                 </UniformGrid>
 
-                <Button Grid.Row="3" Style="{StaticResource PrimaryButton}" Content="▶   Começar minha aventura   →"
+                <Button x:Name="StartButton" Grid.Row="3" Style="{StaticResource PrimaryButton}" Content="▶   Começar prática de 20 minutos   →"
                         HorizontalAlignment="Center" MinWidth="360" Margin="0,18,0,14" Click="Start_Click" />
 
                 <UniformGrid Grid.Row="4" x:Name="FeatureGrid" Rows="1" Columns="3" Margin="-6,0">

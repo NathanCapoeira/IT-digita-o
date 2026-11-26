@@ -33,6 +33,7 @@ namespace ITDigitacao.Wpf
             var choice = sender as Button;
             if (choice == null) return;
             selectedDuration = Convert.ToInt32(choice.Tag);
+            StartButton.Content = String.Format("▶   Começar prática de {0} minutos   →", selectedDuration);
             foreach (var button in DurationGrid.Children.OfType<Button>())
                 DurationChoice.SetIsSelected(button, ReferenceEquals(button, choice));
         }
