@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>7.3</LangVersion>
+    <PlatformTarget>x86</PlatformTarget>
+    <AssemblyName>IT-Digitacao-3.0</AssemblyName>
+    <RootNamespace>ITDigitacao.Wpf</RootNamespace>
+    <AutomaticallyUseReferenceAssemblyPackages>false</AutomaticallyUseReferenceAssemblyPackages>
+    <ApplicationIcon>..\..\assets\app.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ITDigitacao.Core\ITDigitacao.Core.csproj" />
+    <Resource Include="Assets\logo-instituto.png" />
+    <Resource Include="Assets\Icons\*.png" />
+    <Resource Include="Assets\Mascot\*.png" />
+  </ItemGroup>
+</Project>

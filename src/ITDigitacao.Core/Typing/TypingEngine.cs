@@ -24,7 +24,7 @@ namespace ITDigitacao.Core.Typing
         public int CorrectAttempts { get { return attemptsCorrect; } }
         public int IncorrectAttempts { get { return attemptsIncorrect; } }
         public int Errors { get { return errors; } }
-        public int CorrectCharacters { get { return Math.Max(0, entered.Length - errors); } }
+        public int CorrectCharacters { get { return correctness.FindAll(value => value).Count; } }
         public int Position { get { return entered.Length; } }
         public int ReferenceLength { get { return reference.Length; } }
         public int ErrorsAt(int index) { return index >= 0 && index < correctness.Count && !correctness[index] ? 1 : 0; }
@@ -40,18 +40,49 @@ namespace ITDigitacao.Core.Typing
             if (entered.Length >= reference.Length) return false;
             value = value.ToString().Normalize(NormalizationForm.FormC)[0];
             bool correct = CharEquals(reference[entered.Length], value);
-            if (correct) attemptsCorrect++; else { errors++; attemptsIncorrect++; }
-            entered.Append(value);
-            correctness.Add(correct);
+            Edit(entered.Length, 0, value.ToString());
             return correct;
         }
         public bool Backspace()
         {
             if (entered.Length == 0) return false;
-            if (!correctness[correctness.Count - 1]) errors--;
-            correctness.RemoveAt(correctness.Count - 1);
-            entered.Length--;
+            return Edit(entered.Length - 1, 1, String.Empty);
+        }
+        public bool DeleteAt(int index)
+        {
+            if (index < 0 || index >= entered.Length) return false;
+            return Edit(index, 1, String.Empty);
+        }
+        public bool Edit(int index, int removeLength, string insertedText)
+        {
+            if (index < 0 || index > entered.Length || removeLength < 0 || index + removeLength > entered.Length)
+                throw new ArgumentOutOfRangeException("index");
+
+            insertedText = (insertedText ?? String.Empty).Normalize(NormalizationForm.FormC);
+            int available = reference.Length - (entered.Length - removeLength);
+            if (insertedText.Length > available) insertedText = insertedText.Substring(0, available);
+            if (removeLength == 0 && insertedText.Length == 0) return false;
+
+            entered.Remove(index, removeLength);
+            entered.Insert(index, insertedText);
+            for (int i = 0; i < insertedText.Length; i++)
+            {
+                if (index + i < reference.Length && CharEquals(reference[index + i], insertedText[i])) attemptsCorrect++;
+                else attemptsIncorrect++;
+            }
+            RecalculateCorrectness();
             return true;
+        }
+        private void RecalculateCorrectness()
+        {
+            correctness.Clear();
+            errors = 0;
+            for (int i = 0; i < entered.Length; i++)
+            {
+                bool correct = i < reference.Length && CharEquals(reference[i], entered[i]);
+                correctness.Add(correct);
+                if (!correct) errors++;
+            }
         }
         private static bool CharEquals(char left, char right)
         {

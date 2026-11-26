@@ -2,16 +2,20 @@
 setlocal
 cd /d "%~dp0.."
 
-echo Building IT Digitacao for Windows...
+echo Building IT Digitacao 3.0 WPF preview for Windows...
 where msbuild >nul 2>nul
 if errorlevel 1 goto no_msbuild
 
 echo Restoring project assets...
 msbuild src\ITDigitacao.App\ITDigitacao.App.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
 if errorlevel 1 goto restore_failed
+msbuild src\ITDigitacao.Wpf\ITDigitacao.Wpf.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
+if errorlevel 1 goto restore_failed
 
-echo Compiling application...
+echo Building the existing application and the WPF home-screen preview...
 msbuild src\ITDigitacao.App\ITDigitacao.App.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
+if errorlevel 1 goto build_failed
+msbuild src\ITDigitacao.Wpf\ITDigitacao.Wpf.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
 if errorlevel 1 goto build_failed
 
 where dotnet >nul 2>nul
@@ -27,9 +31,10 @@ echo .NET SDK not found. Core regression tests were skipped.
 :tests_done
 
 echo.
-echo Build completed. Output files are in:
-echo src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe
-if exist src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe start "" "src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe"
+echo Existing application: src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe
+echo WPF visual preview: src\ITDigitacao.Wpf\bin\x86\Release\net48\IT-Digitacao-3.0.exe
+echo The preview contains only the home screen; other screens await visual approval.
+if exist src\ITDigitacao.Wpf\bin\x86\Release\net48\IT-Digitacao-3.0.exe start "" "src\ITDigitacao.Wpf\bin\x86\Release\net48\IT-Digitacao-3.0.exe"
 echo.
 pause
 exit /b 0
@@ -52,8 +57,7 @@ exit /b 1
 
 :restore_failed
 echo.
-echo ERROR: Package restore failed. Check internet access and NuGet configuration,
-echo and confirm the .NET Framework 4.8 Developer Pack is installed in Visual Studio Installer.
+echo ERROR: Package restore failed. Check network access and confirm the .NET Framework 4.8 Developer Pack is installed.
 echo.
 pause
 exit /b 1

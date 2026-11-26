@@ -122,9 +122,11 @@ namespace ITDigitacao.App.Forms
         {
             var banner = new Panel { Height = height, Dock = DockStyle.Top, BackColor = Theme.Red, Padding = new Padding(24, 12, 12, 12), Margin = new Padding(0, 8, 0, 12) };
             var mascot = Mascot(pose); mascot.Width = Math.Min(250, height * 2); mascot.Dock = DockStyle.Right;
-            var copy = new Panel { Dock = DockStyle.Fill, BackColor = Color.Transparent };
-            copy.Controls.Add(new Label { Text = subtitle, Dock = DockStyle.Bottom, Height = Math.Max(32, height / 3), Font = new Font("Segoe UI", 12), ForeColor = Color.White, TextAlign = ContentAlignment.TopLeft });
-            copy.Controls.Add(new Label { Text = title, Dock = DockStyle.Fill, Font = new Font("Segoe UI", height > 125 ? 22 : 18, FontStyle.Bold), ForeColor = Color.White, TextAlign = ContentAlignment.BottomLeft });
+            var copy = new TableLayoutPanel { Dock = DockStyle.Fill, BackColor = Color.Transparent, ColumnCount = 1, RowCount = 2 };
+            copy.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            copy.RowStyles.Add(new RowStyle(SizeType.Percent, 58)); copy.RowStyles.Add(new RowStyle(SizeType.Percent, 42));
+            copy.Controls.Add(new Label { Text = title, Dock = DockStyle.Fill, Font = new Font("Segoe UI", height > 125 ? 22 : 18, FontStyle.Bold), ForeColor = Color.White, TextAlign = ContentAlignment.BottomLeft }, 0, 0);
+            copy.Controls.Add(new Label { Text = subtitle, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 12), ForeColor = Color.White, TextAlign = ContentAlignment.TopLeft }, 0, 1);
             banner.Controls.Add(copy); banner.Controls.Add(mascot); return banner;
         }
 
@@ -215,7 +217,9 @@ namespace ITDigitacao.App.Forms
             foreach (var card in categoryCards)
             {
                 string cat = (string)card.Tag;
-                card.Visible = activities.Any(a => a.Category == cat && (selectedDifficulty == "Todas" || a.Difficulty == selectedDifficulty));
+                int count = activities.Count(a => a.Category == cat && (selectedDifficulty == "Todas" || a.Difficulty == selectedDifficulty));
+                card.SetCount(count);
+                card.Visible = count > 0;
             }
         }
         private void ShowCategory(string category)
@@ -223,13 +227,16 @@ namespace ITDigitacao.App.Forms
             ClearPage(); var shell = new Panel { Dock = DockStyle.Fill, BackColor = Theme.Background };
             var main = new Panel { Dock = DockStyle.Fill, AutoScroll = true, Padding = new Padding(20) };
             var host = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 1, RowCount = 3 };
+            host.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            for (int row = 0; row < 3; row++) host.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             var info = categories.First(c => c.Name == category);
-            var top = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill }; top.Controls.Add(new ModernButton("← Biblioteca", ShowLibrary, false)); top.Controls.Add(Label("Biblioteca  ›  " + ShortCategory(category), 20, true, Theme.Ink)); host.Controls.Add(top, 0, 0);
+            var top = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Top }; top.Controls.Add(new ModernButton("← Biblioteca", ShowLibrary, false)); top.Controls.Add(Label("Biblioteca  ›  " + ShortCategory(category), 20, true, Theme.Ink)); host.Controls.Add(top, 0, 0);
             host.Controls.Add(Banner(ShortCategory(category), info.Description, "ensinando", 118), 0, 1);
             var list = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false };
             foreach (var activity in activities.Where(a => a.Category == category).OrderBy(a => DifficultyOrder(a.Difficulty)))
             { var selected = activity; list.Controls.Add(new ActivityCard(activity, delegate { OpenActivity(selected); }) { Width = Math.Max(540, main.ClientSize.Width - 64) }); }
             host.Controls.Add(list, 0, 2); main.Controls.Add(host); shell.Controls.Add(main); shell.Controls.Add(Sidebar("Biblioteca")); page.Controls.Add(shell);
+            main.SizeChanged += delegate { foreach (Control item in list.Controls) item.Width = Math.Max(540, main.ClientSize.Width - 64); };
         }
         private int DifficultyOrder(string value) { return value == "Iniciante" ? 0 : value == "Intermediário" ? 1 : 2; }
 
@@ -276,7 +283,7 @@ namespace ITDigitacao.App.Forms
         {
             var panel = new Panel { Dock = DockStyle.Fill, BackColor = Color.White, Padding = new Padding(12), Margin = new Padding(6) };
             panel.Controls.Add(new Label { Text = title, Dock = DockStyle.Top, Height = 32, ForeColor = Theme.Ink, Font = new Font("Segoe UI", 12, FontStyle.Bold) });
-            box = new RichTextBox { Dock = DockStyle.Fill, BorderStyle = BorderStyle.None, Font = new Font("Segoe UI", settings.FontSize), WordWrap = true, DetectUrls = false, BackColor = Color.White, ScrollBars = RichTextBoxScrollBars.Vertical };
+            box = new NoPasteRichTextBox { Dock = DockStyle.Fill, BorderStyle = BorderStyle.None, Font = new Font("Segoe UI", settings.FontSize), WordWrap = true, DetectUrls = false, BackColor = Color.White, ScrollBars = RichTextBoxScrollBars.Vertical };
             panel.Controls.Add(box); return panel;
         }
         private void SetFontSize(int size)
@@ -288,20 +295,27 @@ namespace ITDigitacao.App.Forms
         }
         private void TypingKeyDown(object sender, KeyEventArgs e)
         {
-            if ((e.Control && e.KeyCode == Keys.V) || (e.Shift && e.KeyCode == Keys.Insert)) { e.SuppressKeyPress = true; return; }
-            if ((e.Control && (e.KeyCode == Keys.X || e.KeyCode == Keys.C)) || e.KeyCode == Keys.Delete) { e.SuppressKeyPress = true; return; }
-            if (e.KeyCode == Keys.Back) { engine.Backspace(); e.SuppressKeyPress = true; }
+            if ((e.Control && (e.KeyCode == Keys.V || e.KeyCode == Keys.Z || e.KeyCode == Keys.Y))
+                || (e.Shift && e.KeyCode == Keys.Insert)) { e.SuppressKeyPress = true; return; }
         }
         private void TypingChanged(object sender, EventArgs e)
         {
             if (typingBox == null || engine == null) return;
             string current = typingBox.Text;
-            if (current.Length > engine.Position)
+            string previous = engine.EnteredText;
+            int prefix = 0;
+            while (prefix < previous.Length && prefix < current.Length && previous[prefix] == current[prefix]) prefix++;
+            int suffix = 0;
+            while (suffix < previous.Length - prefix && suffix < current.Length - prefix
+                && previous[previous.Length - 1 - suffix] == current[current.Length - 1 - suffix]) suffix++;
+            int removed = previous.Length - prefix - suffix;
+            int insertedLength = current.Length - prefix - suffix;
+            if (insertedLength > 0 && !sessionWatch.IsRunning)
             {
-                if (!sessionWatch.IsRunning) { sessionWatch.Start(); timer.Start(); textWatch.Start(); }
-                for (int i = engine.Position; i < current.Length; i++) engine.Type(current[i]);
+                sessionWatch.Start(); timer.Start(); textWatch.Start();
             }
-            else if (current.Length < engine.Position) { while (engine.Position > current.Length) engine.Backspace(); }
+            if (removed > 0 || insertedLength > 0)
+                engine.Edit(prefix, removed, current.Substring(prefix, insertedLength));
             if (engine.EnteredText != current) { int caret = typingBox.SelectionStart; typingBox.Text = engine.EnteredText; typingBox.SelectionStart = Math.Min(caret, typingBox.Text.Length); }
             RenderTypedFeedback(); UpdateMetrics();
         }

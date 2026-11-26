@@ -10,8 +10,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Restore
         run: msbuild src/ITDigitacao.App/ITDigitacao.App.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
+      - name: Restore WPF visual preview
+        run: msbuild src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
       - name: Build .NET Framework application
         run: msbuild src/ITDigitacao.App/ITDigitacao.App.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
+      - name: Build WPF home-screen preview
+        run: msbuild src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
       - name: Core regression tests
         run: dotnet test tests/ITDigitacao.Core.Tests/ITDigitacao.Core.Tests.csproj --configuration Release --verbosity minimal
       - name: Upload build output
@@ -19,3 +23,8 @@ jobs:
         with:
           name: IT-Digitacao-Release
           path: src/ITDigitacao.App/bin/x86/Release/net48/
+      - name: Upload WPF visual preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: IT-Digitacao-3.0-Home-Preview
+          path: src/ITDigitacao.Wpf/bin/x86/Release/net48/

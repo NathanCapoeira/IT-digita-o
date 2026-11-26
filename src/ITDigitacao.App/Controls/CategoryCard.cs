@@ -6,6 +6,8 @@ namespace ITDigitacao.App.Controls
 {
     internal sealed class CategoryCard : UserControl
     {
+        private readonly Label total;
+
         public CategoryCard(string title, string description, int count, string iconPath, Action select)
         {
             Width = 192;
@@ -23,11 +25,13 @@ namespace ITDigitacao.App.Controls
             if (System.IO.File.Exists(iconPath)) icon.Image = Image.FromFile(iconPath);
             var name = new Label { Text = title, AutoSize = true, Font = new Font("Segoe UI", 11, FontStyle.Bold), ForeColor = Theme.Ink, TextAlign = ContentAlignment.MiddleLeft };
             var desc = new Label { Text = description, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 9), ForeColor = Color.FromArgb(80, 80, 80) };
-            var total = new Label { Text = count + (count == 1 ? " atividade" : " atividades"), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Theme.Red };
+            total = new Label { Text = CountText(count), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Theme.Red };
             layout.Controls.Add(icon, 0, 0); layout.Controls.Add(name, 0, 1); layout.Controls.Add(desc, 0, 2); layout.Controls.Add(total, 0, 3); Controls.Add(layout);
             Click += delegate { select(); };
             WireChildren(this, select);
         }
+        public void SetCount(int count) { total.Text = CountText(count); }
+        private static string CountText(int count) { return count + (count == 1 ? " atividade" : " atividades"); }
         private static void WireChildren(Control parent, Action select)
         {
             foreach (Control child in parent.Controls)
