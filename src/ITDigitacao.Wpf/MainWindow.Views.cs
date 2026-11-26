@@ -112,7 +112,7 @@ namespace ITDigitacao.Wpf
         {
             string path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "activities.json");
             if (!File.Exists(path)) throw new FileNotFoundException("A biblioteca educativa local não foi encontrada.", path);
-            var loaded = JsonRead<List<Activity>>(File.ReadAllText(path));
+            var loaded = JsonSerialization.JsonRead<List<Activity>>(File.ReadAllText(path));
             if (loaded == null || loaded.Count != 30 || loaded.Any(a => String.IsNullOrWhiteSpace(a.Id) || String.IsNullOrWhiteSpace(a.Content))
                 || loaded.Select(a => a.Id).Distinct().Count() != loaded.Count)
                 throw new InvalidDataException("A biblioteca local contém dados incompletos ou IDs repetidos.");
