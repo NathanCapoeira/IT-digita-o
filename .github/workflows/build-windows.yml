@@ -56,10 +56,18 @@ jobs:
         shell: pwsh
         run: |
           $exe = (Resolve-Path 'src/ITDigitacao.Wpf/bin/x86/Release/net48/IT-Digitacao-3.0.exe').Path
-          $app = Start-Process -FilePath $exe -PassThru
+          $workingDirectory = Split-Path $exe -Parent
+          $stdout = Join-Path $env:RUNNER_TEMP 'it-digitacao-startup.stdout.log'
+          $stderr = Join-Path $env:RUNNER_TEMP 'it-digitacao-startup.stderr.log'
+          Remove-Item $stdout, $stderr -Force -ErrorAction SilentlyContinue
+          $app = Start-Process -FilePath $exe -WorkingDirectory $workingDirectory -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
           Start-Sleep -Seconds 8
           $app.Refresh()
-          if ($app.HasExited) { throw "WPF application exited during startup with code $($app.ExitCode)" }
+          if ($app.HasExited) {
+            if (Test-Path $stdout) { Get-Content $stdout }
+            if (Test-Path $stderr) { Get-Content $stderr }
+            throw "WPF application exited during startup with code $($app.ExitCode)"
+          }
           Stop-Process -Id $app.Id -Force
       - name: Package WPF release
         shell: pwsh
