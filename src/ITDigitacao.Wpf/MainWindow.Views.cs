@@ -169,11 +169,11 @@ namespace ITDigitacao.Wpf
             miniBrand.Children.Add(LocalImage("logo-instituto.png", 68, 68, Stretch.UniformToFill));
             miniBrand.Children.Add(Text("EXPLORE", 11, true, BrushFrom("#FFFFCCCC")));
             Grid.SetRow(miniBrand, 0); side.Children.Add(miniBrand);
-            AddSideButton(side, "⌂   Início", 1, ShowHome);
-            AddSideButton(side, "▤   Biblioteca", 2, ShowLibrary);
-            AddSideButton(side, "⌨   Como digitar", 3, ShowGuide);
-            AddSideButton(side, "⚙   Configurações", 4, ShowSettings);
-            if (activeActivity != null) AddSideButton(side, "←   Voltar à digitação", 5, ShowEditor);
+            AddSideButton(side, "⌂   Início", 1, selected, ShowHome);
+            AddSideButton(side, "▤   Biblioteca", 2, selected, ShowLibrary);
+            AddSideButton(side, "⌨   Como digitar", 3, selected, ShowGuide);
+            AddSideButton(side, "⚙   Configurações", 4, selected, ShowSettings);
+            if (activeActivity != null) AddSideButton(side, "←   Voltar à digitação", 5, selected, ShowEditor);
             var sideFoot = new StackPanel { Margin = new Thickness(16, 10, 12, 16), VerticalAlignment = VerticalAlignment.Bottom };
             sideFoot.Children.Add(Text("Aprenda.\nPratique.\nTransforme.", 21, true, Brushes.White, TextWrapping.Wrap));
             sideFoot.Children.Add(Text("v3.0  •  Offline", 11, true, Brushes.White));
@@ -187,7 +187,7 @@ namespace ITDigitacao.Wpf
             return root;
         }
 
-        private void AddSideButton(Grid side, string text, int row, Action action)
+        private void AddSideButton(Grid side, string text, int row, string selected, Action action)
         {
             var button = new Button { Content = text, Style = (Style)FindResource("SidebarButton"), Margin = new Thickness(8, 4, 8, 4),
                 Padding = new Thickness(12, 10, 8, 10), HorizontalContentAlignment = HorizontalAlignment.Left,
