@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup><OutputType>WinExe</OutputType><TargetFramework>net48</TargetFramework><UseWindowsForms>true</UseWindowsForms><LangVersion>7.3</LangVersion><PlatformTarget>x86</PlatformTarget><AssemblyName>IT-Digitacao</AssemblyName><RootNamespace>ITDigitacao.App</RootNamespace><ApplicationIcon>..\..\assets\app.ico</ApplicationIcon></PropertyGroup>
   <ItemGroup><ProjectReference Include="..\ITDigitacao.Core\ITDigitacao.Core.csproj"/><Reference Include="System.Web.Extensions"/></ItemGroup>
-  <ItemGroup><Content Include="..\..\content\activities.json" Link="activities.json" CopyToOutputDirectory="PreserveNewest"/><None Include="..\..\assets\app.ico" Link="app.ico"/></ItemGroup>
+  <ItemGroup><Content Include="..\..\content\activities.json" Link="activities.json" CopyToOutputDirectory="PreserveNewest"/><Content Include="..\..\assets\logo-conceitual.png" Link="logo.png" CopyToOutputDirectory="PreserveNewest"/><None Include="..\..\assets\app.ico" Link="app.ico"/></ItemGroup>
 </Project>
