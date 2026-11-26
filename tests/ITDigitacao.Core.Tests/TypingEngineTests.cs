@@ -106,5 +106,28 @@ namespace ITDigitacao.Core.Tests
             Assert.Equal(2, MetricsCalculator.Stars(20, 80));
             Assert.Equal(3, MetricsCalculator.Stars(20, 95));
         }
+
+        [Fact]
+        public void PunctuationSpacesAndLineBreaksAreTypedAsReferenceCharacters()
+        {
+            var engine = new TypingEngine("Olá, mundo!\nTudo bem?");
+
+            foreach (char character in "Olá, mundo!\nTudo bem?")
+                Assert.True(engine.Type(character));
+
+            Assert.True(engine.IsComplete);
+            Assert.Equal(100, engine.Accuracy);
+        }
+
+        [Fact]
+        public void BackspaceAtStartDoesNotChangeProgressOrAttemptCount()
+        {
+            var engine = new TypingEngine("á");
+
+            Assert.False(engine.Backspace());
+            Assert.Equal(0, engine.Attempts);
+            Assert.Equal(0, engine.ProgressPercent);
+            Assert.Equal("", engine.EnteredText);
+        }
     }
 }
