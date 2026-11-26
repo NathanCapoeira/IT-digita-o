@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Diagnostics;
-using System.Web.Script.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -22,6 +23,23 @@ namespace ITDigitacao.Wpf
 {
     public partial class MainWindow
     {
+        private static T JsonRead<T>(string json)
+        {
+            var serializer = new DataContractJsonSerializer(typeof(T));
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+                return (T)serializer.ReadObject(stream);
+        }
+
+        private static string JsonWrite<T>(T value)
+        {
+            var serializer = new DataContractJsonSerializer(typeof(T));
+            using (var stream = new MemoryStream())
+            {
+                serializer.WriteObject(stream, value);
+                return Encoding.UTF8.GetString(stream.ToArray());
+            }
+        }
+
         private readonly string[] categoryNames = {
             "Informática e tecnologia", "Ciências e curiosidades", "Meio ambiente", "Educação financeira",
             "Segurança digital", "Ética e cidadania", "Desenvolvimento pessoal", "Mundo profissional",
@@ -91,7 +109,7 @@ namespace ITDigitacao.Wpf
         {
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "activities.json");
             if (!File.Exists(path)) throw new FileNotFoundException("A biblioteca educativa local não foi encontrada.", path);
-            var loaded = new JavaScriptSerializer().Deserialize<List<Activity>>(File.ReadAllText(path));
+            var loaded = JsonRead<List<Activity>>(File.ReadAllText(path));
             if (loaded == null || loaded.Count != 30 || loaded.Any(a => String.IsNullOrWhiteSpace(a.Id) || String.IsNullOrWhiteSpace(a.Content))
                 || loaded.Select(a => a.Id).Distinct().Count() != loaded.Count)
                 throw new InvalidDataException("A biblioteca local contém dados incompletos ou IDs repetidos.");
@@ -739,13 +757,13 @@ namespace ITDigitacao.Wpf
         private static string FilePath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ITDigitacao", "settings.json"); } }
         public static AppPreferences Load()
         {
-            try { if (File.Exists(FilePath)) return new JavaScriptSerializer().Deserialize<AppPreferences>(File.ReadAllText(FilePath)) ?? new AppPreferences(); } catch { }
+            try { if (File.Exists(FilePath)) return JsonRead<AppPreferences>(File.ReadAllText(FilePath)) ?? new AppPreferences(); } catch { }
             return new AppPreferences();
         }
         public void Save()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
-            File.WriteAllText(FilePath, new JavaScriptSerializer().Serialize(this));
+            File.WriteAllText(FilePath, JsonWrite(this));
         }
     }
 }
