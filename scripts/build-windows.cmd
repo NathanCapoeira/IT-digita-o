@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0.."
 
-echo Building IT Digitacao 3.0 WPF preview for Windows...
+echo Building IT Digitacao 3.0 WPF application for Windows...
 where msbuild >nul 2>nul
 if errorlevel 1 goto no_msbuild
 
@@ -12,7 +12,7 @@ if errorlevel 1 goto restore_failed
 msbuild src\ITDigitacao.Wpf\ITDigitacao.Wpf.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
 if errorlevel 1 goto restore_failed
 
-echo Building the existing application and the WPF home-screen preview...
+echo Building the existing application and the WPF application...
 msbuild src\ITDigitacao.App\ITDigitacao.App.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
 if errorlevel 1 goto build_failed
 msbuild src\ITDigitacao.Wpf\ITDigitacao.Wpf.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
@@ -32,8 +32,7 @@ echo .NET SDK not found. Core regression tests were skipped.
 
 echo.
 echo Existing application: src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe
-echo WPF visual preview: src\ITDigitacao.Wpf\bin\x86\Release\net48\IT-Digitacao-3.0.exe
-echo The preview contains only the home screen; other screens await visual approval.
+echo WPF application: src\ITDigitacao.Wpf\bin\x86\Release\net48\IT-Digitacao-3.0.exe
 if exist src\ITDigitacao.Wpf\bin\x86\Release\net48\IT-Digitacao-3.0.exe start "" "src\ITDigitacao.Wpf\bin\x86\Release\net48\IT-Digitacao-3.0.exe"
 echo.
 pause

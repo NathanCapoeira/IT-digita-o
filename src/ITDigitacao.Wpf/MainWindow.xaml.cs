@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace ITDigitacao.Wpf
 {
@@ -13,6 +12,7 @@ namespace ITDigitacao.Wpf
         public MainWindow()
         {
             InitializeComponent();
+            InitializeNavigation();
         }
 
         private void HomeContent_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -39,25 +39,17 @@ namespace ITDigitacao.Wpf
 
         private void Start_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(this,
-                String.Format("Prática selecionada: {0} minutos. A biblioteca e as atividades serão liberadas após a aprovação visual desta tela inicial.", selectedDuration),
-                "IT Digitação 3.0 — avaliação visual", MessageBoxButton.OK, MessageBoxImage.Information);
+            ShowLibrary();
         }
 
         private void Guide_Click(object sender, RoutedEventArgs e)
         {
-            ShowNextStageMessage("O guia será implementado após a aprovação visual da tela inicial.");
+            ShowGuide();
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            ShowNextStageMessage("As configurações serão implementadas após a aprovação visual da tela inicial.");
-        }
-
-        private void ShowNextStageMessage(string message)
-        {
-            MessageBox.Show(this, message, "IT Digitação 3.0 — avaliação visual",
-                MessageBoxButton.OK, MessageBoxImage.Information);
+            ShowSettings();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)

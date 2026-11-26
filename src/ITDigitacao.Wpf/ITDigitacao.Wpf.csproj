@@ -12,8 +12,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\ITDigitacao.Core\ITDigitacao.Core.csproj" />
+    <Reference Include="System.Web.Extensions" />
+    <Content Include="..\..\content\activities.json" Link="activities.json" CopyToOutputDirectory="PreserveNewest" />
     <Resource Include="Assets\logo-instituto.png" />
     <Resource Include="Assets\Icons\*.png" />
+    <Resource Include="Assets\Categories\*.png" />
     <Resource Include="Assets\Mascot\*.png" />
   </ItemGroup>
 </Project>

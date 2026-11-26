@@ -22,6 +22,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Image Source="/IT-Digitacao-3.0;component/Assets/logo-instituto.png" Width="48" Height="48"
                        Stretch="UniformToFill" VerticalAlignment="Center" />
@@ -33,14 +34,18 @@
                 </StackPanel>
                 <Button Grid.Column="3" Style="{StaticResource HeaderActionButton}" Content="Como digitar"
                         Margin="8,0" Click="Guide_Click" ToolTip="Abrir o guia de digitação" />
-                <Button Grid.Column="4" Style="{StaticResource HeaderActionButton}" Content="Configurações"
+                <TextBlock x:Name="GlobalClockLabel" Grid.Column="4" Text="20:00" FontSize="18" FontWeight="Bold"
+                           Foreground="{StaticResource BrandDeepRed}" VerticalAlignment="Center" Margin="8,0"
+                           Visibility="Collapsed" AutomationProperties.Name="Tempo restante da sessão" />
+                <Button Grid.Column="5" Style="{StaticResource HeaderActionButton}" Content="Configurações"
                         Margin="8,0" Click="Settings_Click" ToolTip="Abrir configurações" />
-                <Button Grid.Column="5" Style="{StaticResource HeaderActionButton}" Content="Sair"
+                <Button Grid.Column="6" Style="{StaticResource HeaderActionButton}" Content="Sair"
                         Margin="8,0,0,0" Click="Exit_Click" ToolTip="Fechar o IT Digitação" />
             </Grid>
         </Border>
 
-        <ScrollViewer x:Name="HomeScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto"
+        <Grid x:Name="PageArea" Grid.Row="1">
+        <ScrollViewer x:Name="HomeScroll" VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled" CanContentScroll="False">
             <Grid x:Name="HomeContent" Margin="28,20" SizeChanged="HomeContent_SizeChanged">
                 <Grid.RowDefinitions>
@@ -143,6 +148,7 @@
                 </UniformGrid>
             </Grid>
         </ScrollViewer>
+        </Grid>
 
         <Border Grid.Row="2" Background="{StaticResource BrandDeepRed}" Padding="28,6">
             <Grid>
