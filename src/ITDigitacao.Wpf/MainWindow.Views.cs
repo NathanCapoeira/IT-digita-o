@@ -355,7 +355,14 @@ namespace ITDigitacao.Wpf
             var rows = new StackPanel();
             var chosen = activities.Where(a => a.Category == category && (selectedDifficulty == "Todas" || a.Difficulty == selectedDifficulty)).ToList();
             foreach (Activity activity in chosen) rows.Children.Add(ActivityCard(activity));
-            if (chosen.Count == 0) rows.Children.Add(Text("Não há atividades neste nível. Escolha outro filtro.", 15, false, (Brush)FindResource("BrandMuted"), TextWrapping.Wrap));
+            if (chosen.Count == 0)
+            {
+                var empty = new StackPanel { Margin = new Thickness(12) };
+                empty.Children.Add(Text("Não há atividades neste nível.", 18, true, (Brush)FindResource("BrandInk"), TextWrapping.Wrap));
+                empty.Children.Add(Text("Escolha outro nível para ver as atividades disponíveis nesta categoria.", 14, false, (Brush)FindResource("BrandMuted"), TextWrapping.Wrap));
+                empty.Children.Add(UiButton("Mostrar todos os níveis", delegate { selectedDifficulty = "Todas"; ShowCategory(category); }));
+                rows.Children.Add(Card(empty, new Thickness(18)));
+            }
             content.Children.Add(rows);
             PageArea.Children.Clear(); PageArea.Children.Add(root);
         }
