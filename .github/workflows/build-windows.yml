@@ -8,6 +8,8 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
+      - name: Restore
+        run: msbuild src/ITDigitacao.App/ITDigitacao.App.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
       - name: Build .NET Framework application
         run: msbuild src/ITDigitacao.App/ITDigitacao.App.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
       - name: Upload build output
