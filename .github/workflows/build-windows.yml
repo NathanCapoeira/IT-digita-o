@@ -8,6 +8,10 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
+      - name: Setup .NET SDK for regression tests
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
       - name: Restore WPF
@@ -35,7 +39,14 @@ jobs:
       - name: Build WPF desktop application
         run: msbuild src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
       - name: Core regression tests
-        run: dotnet test tests/ITDigitacao.Core.Tests/ITDigitacao.Core.Tests.csproj --configuration Release --verbosity minimal
+        run: dotnet test tests/ITDigitacao.Core.Tests/ITDigitacao.Core.Tests.csproj --configuration Release --verbosity minimal --logger "trx;LogFileName=core-regression.trx" --results-directory TestResults
+      - name: Upload regression test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: IT-Digitacao-Core-Test-Results
+          path: TestResults/*.trx
+          if-no-files-found: warn
       - name: Verify WPF executable
         shell: pwsh
         run: |
