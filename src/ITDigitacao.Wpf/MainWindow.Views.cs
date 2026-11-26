@@ -765,7 +765,7 @@ namespace ITDigitacao.Wpf
         }
         public void Save()
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(FilePath));
+            Directory.CreateDirectory(System.IO.Path.GetDirectoryName(FilePath));
             File.WriteAllText(FilePath, JsonSerialization.JsonWrite(this));
         }
     }

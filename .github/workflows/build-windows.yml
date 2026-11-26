@@ -8,14 +8,39 @@ jobs:
     runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
-      - name: Restore
-        run: msbuild src/ITDigitacao.App/ITDigitacao.App.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
-      - name: Build .NET Framework application
-        run: msbuild src/ITDigitacao.App/ITDigitacao.App.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+      - name: Verify WPF project and offline catalog
+        shell: pwsh
+        run: |
+          if (!(Test-Path 'src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj')) { throw 'WPF project missing' }
+          if (!(Test-Path 'content/activities.json')) { throw 'Offline activity catalog missing' }
+      - name: Restore WPF
+        run: msbuild src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
+      - name: Verify WPF input files
+        shell: pwsh
+        run: |
+          if (!(Test-Path 'src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj')) { throw 'WPF project missing' }
+          if (!(Test-Path 'content/activities.json')) { throw 'Offline activity catalog missing' }
+      - name: Build WPF desktop application
+        run: msbuild src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
       - name: Core regression tests
         run: dotnet test tests/ITDigitacao.Core.Tests/ITDigitacao.Core.Tests.csproj --configuration Release --verbosity minimal
-      - name: Upload build output
+      - name: Verify WPF executable
+        shell: pwsh
+        run: |
+          $exe = 'src/ITDigitacao.Wpf/bin/x86/Release/net48/IT-Digitacao-3.0.exe'
+          if (!(Test-Path $exe)) { throw "WPF executable not generated: $exe" }
+      - name: Package WPF release
+        shell: pwsh
+        run: |
+          $out = 'dist/IT-Digitacao-3.0-Rebuild-Release'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          Copy-Item 'src/ITDigitacao.Wpf/bin/x86/Release/net48/*' $out -Recurse -Force
+          "Commit: $env:GITHUB_SHA`nVersion: 3.0`nProject: WPF`nArchitecture: x86`nFramework: .NET Framework 4.8" | Set-Content "$out/BUILD-INFO.txt"
+          Compress-Archive -Path "$out/*" -DestinationPath 'dist/IT-Digitacao-3.0-Rebuild-Release.zip' -Force
+      - name: Upload WPF release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: IT-Digitacao-Release
-          path: src/ITDigitacao.App/bin/x86/Release/net48/
+          name: IT-Digitacao-3.0-Rebuild-Release
+          path: dist/IT-Digitacao-3.0-Rebuild-Release.zip
