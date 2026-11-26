@@ -14,6 +14,18 @@ echo Compiling application...
 msbuild src\ITDigitacao.App\ITDigitacao.App.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
 if errorlevel 1 goto build_failed
 
+where dotnet >nul 2>nul
+if errorlevel 1 goto tests_skipped
+echo Running Core regression tests...
+dotnet test tests\ITDigitacao.Core.Tests\ITDigitacao.Core.Tests.csproj --configuration Release --verbosity minimal
+if errorlevel 1 goto tests_failed
+goto tests_done
+
+:tests_skipped
+echo .NET SDK not found. Core regression tests were skipped.
+
+:tests_done
+
 echo.
 echo Build completed. Output files are in:
 echo src\ITDigitacao.App\bin\x86\Release\net48\IT-Digitacao.exe
@@ -42,6 +54,13 @@ exit /b 1
 echo.
 echo ERROR: Package restore failed. Check internet access and NuGet configuration,
 echo and confirm the .NET Framework 4.8 Developer Pack is installed in Visual Studio Installer.
+echo.
+pause
+exit /b 1
+
+:tests_failed
+echo.
+echo ERROR: Core regression tests failed.
 echo.
 pause
 exit /b 1

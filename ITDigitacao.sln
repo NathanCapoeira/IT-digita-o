@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITDigitacao.Core", "src\ITD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITDigitacao.App", "src\ITDigitacao.App\ITDigitacao.App.csproj", "{1D7BD26B-B3B8-49F0-85B7-4623276A2E3D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ITDigitacao.Core.Tests", "tests\ITDigitacao.Core.Tests\ITDigitacao.Core.Tests.csproj", "{2E857C74-D2C3-4CE9-9D1A-FBF8F3D73F8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,5 +28,9 @@ Global
 		{1D7BD26B-B3B8-49F0-85B7-4623276A2E3D}.Debug|x86.Build.0 = Debug|x86
 		{1D7BD26B-B3B8-49F0-85B7-4623276A2E3D}.Release|x86.ActiveCfg = Release|x86
 		{1D7BD26B-B3B8-49F0-85B7-4623276A2E3D}.Release|x86.Build.0 = Release|x86
+		{2E857C74-D2C3-4CE9-9D1A-FBF8F3D73F8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E857C74-D2C3-4CE9-9D1A-FBF8F3D73F8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E857C74-D2C3-4CE9-9D1A-FBF8F3D73F8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E857C74-D2C3-4CE9-9D1A-FBF8F3D73F8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

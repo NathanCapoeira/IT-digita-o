@@ -12,6 +12,8 @@ jobs:
         run: msbuild src/ITDigitacao.App/ITDigitacao.App.csproj /t:Restore /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
       - name: Build .NET Framework application
         run: msbuild src/ITDigitacao.App/ITDigitacao.App.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
+      - name: Core regression tests
+        run: dotnet test tests/ITDigitacao.Core.Tests/ITDigitacao.Core.Tests.csproj --configuration Release --verbosity minimal
       - name: Upload build output
         uses: actions/upload-artifact@v4
         with:

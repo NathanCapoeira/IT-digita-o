@@ -6,6 +6,10 @@ Aplicativo educacional de treino de digitação para o Instituto de Transformaç
 
 Esta é uma fundação funcional em desenvolvimento, não uma versão 1.0 pronta para uso em sala. Inclui estrutura WinForms, biblioteca local com 30 atividades em dez categorias, filtros, editor de digitação, métricas básicas e cronômetro que começa no primeiro caractere. Ainda faltam validação robusta da biblioteca, persistência das preferências, bloqueio completo dos caminhos de colagem e testes automatizados abrangentes.
 
+## Reformulação visual 2.0
+
+As telas foram reconstruídas com controles WinForms reais, navegação lateral, mascote e ícones locais, cartões de categoria/atividade, editor dividido, guia ABNT2 e preferências locais. Consulte `docs/IT-Digitacao-2.0.md` para arquivos, validações e limitações. As novas telas ainda não foram compiladas nem comparadas visualmente em Windows neste ambiente.
+
 ## Requisitos
 
 - Windows com .NET Framework 4.8 instalado. No Windows 7, é necessário Windows 7 SP1, suporte a SHA-2 e atualização de servicing stack, além das atualizações de plataforma exigidas pelo instalador do .NET Framework 4.8. Instale o runtime previamente usando os pacotes oficiais da Microsoft. A implantação x86 permite executar em Windows de 32 e 64 bits.
