@@ -1,5 +1,6 @@
 using ITDigitacao.Core.Typing;
 using ITDigitacao.Core.Metrics;
+using ITDigitacao.Core.Sessions;
 using System;
 using Xunit;
 
@@ -67,6 +68,43 @@ namespace ITDigitacao.Core.Tests
             Assert.Equal(0, engine.Errors);
             Assert.Equal(3, engine.Attempts);
             Assert.Equal(66.667, engine.Accuracy, 2);
+        }
+
+        [Fact]
+        public void EmptyReferenceCannotStartAnActivity()
+        {
+            Assert.Throws<ArgumentException>(() => new TypingEngine(""));
+        }
+
+        [Fact]
+        public void SessionClockStartsOnlyWhenFirstCharacterIsRequested()
+        {
+            var clock = new SessionClock(5);
+
+            Assert.False(clock.HasStarted);
+            Assert.Equal(TimeSpan.FromMinutes(5), clock.Remaining);
+
+            clock.StartOnFirstCharacter();
+
+            Assert.True(clock.HasStarted);
+            Assert.True(clock.Remaining <= TimeSpan.FromMinutes(5));
+            Assert.False(clock.IsExpired);
+        }
+
+        [Fact]
+        public void SessionClockRejectsDurationsOutsideTheProductLimit()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => new SessionClock(0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new SessionClock(31));
+        }
+
+        [Fact]
+        public void StarsRequirePracticeAndUseAccuracyThresholds()
+        {
+            Assert.Equal(0, MetricsCalculator.Stars(19, 100));
+            Assert.Equal(1, MetricsCalculator.Stars(20, 79.9));
+            Assert.Equal(2, MetricsCalculator.Stars(20, 80));
+            Assert.Equal(3, MetricsCalculator.Stars(20, 95));
         }
     }
 }
