@@ -17,6 +17,21 @@ jobs:
         run: |
           if (!(Test-Path 'src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj')) { throw 'WPF project missing' }
           if (!(Test-Path 'content/activities.json')) { throw 'Offline activity catalog missing' }
+          $required = @(
+            'src/ITDigitacao.Wpf/Assets/logo-instituto.png',
+            'src/ITDigitacao.Wpf/Assets/Mascot/boas-vindas.png',
+            'src/ITDigitacao.Wpf/Assets/Mascot/digitando.png',
+            'src/ITDigitacao.Wpf/Assets/Mascot/ensinando.png',
+            'src/ITDigitacao.Wpf/Assets/Mascot/celebrando.png',
+            'src/ITDigitacao.Wpf/Assets/Icons/biblioteca.png',
+            'src/ITDigitacao.Wpf/Assets/Icons/teclado.png',
+            'src/ITDigitacao.Wpf/Assets/Icons/relogio.png'
+          )
+          foreach ($asset in $required) {
+            if (!(Test-Path $asset) -or (Get-Item $asset).Length -eq 0) { throw "Required WPF asset missing or empty: $asset" }
+          }
+          $categories = @(Get-ChildItem 'src/ITDigitacao.Wpf/Assets/Categories/*.png')
+          if ($categories.Count -ne 10) { throw "Expected 10 category illustrations, found $($categories.Count)" }
       - name: Build WPF desktop application
         run: msbuild src/ITDigitacao.Wpf/ITDigitacao.Wpf.csproj /m /p:Configuration=Release /p:Platform=x86 /verbosity:minimal
       - name: Core regression tests
